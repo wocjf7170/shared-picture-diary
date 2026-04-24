@@ -113,7 +113,12 @@ body {
     width: 100%;
     height: auto;
     display: block;
+    touch-action: none; /* 모바일 터치 시 스크롤 및 줌 방지 */
 }
+
+/* 도구별 커서 스타일 */
+.cursor-pen { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>') 0 24, crosshair; }
+.cursor-eraser { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16l7-7 11 11z"></path><path d="M15 5l6 6"></path></svg>') 0 24, cell; }
 
 .toolbar {
     display: flex;

@@ -157,6 +157,15 @@ function formatDate(d) {
 let isDrawing = false;
 let lastX = 0, lastY = 0;
 
+function updateCursor() {
+    canvas.classList.remove('cursor-pen', 'cursor-eraser');
+    if (isEraser) {
+        canvas.classList.add('cursor-eraser');
+    } else {
+        canvas.classList.add('cursor-pen');
+    }
+}
+
 function startDrawing(e) {
     if (overlay.style.display === 'block') return;
     isDrawing = true;
@@ -165,7 +174,10 @@ function startDrawing(e) {
 
 function draw(e) {
     if (!isDrawing) return;
-    e.preventDefault(); // 스크롤 방지
+    
+    // 모바일에서 터치 시 이벤트 전파 및 스크롤 방지
+    if (e.cancelable) e.preventDefault();
+    
     const [x, y] = getCoordinates(e);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -190,10 +202,12 @@ window.addEventListener('mouseup', stopDrawing);
 
 // 터치 이벤트
 canvas.addEventListener('touchstart', (e) => {
+    if (e.cancelable) e.preventDefault();
     const touch = e.touches[0];
     startDrawing(touch);
 }, { passive: false });
 canvas.addEventListener('touchmove', (e) => {
+    if (e.cancelable) e.preventDefault();
     const touch = e.touches[0];
     draw(touch);
 }, { passive: false });
@@ -201,11 +215,15 @@ canvas.addEventListener('touchend', stopDrawing);
 
 function getCoordinates(e) {
     const rect = canvas.getBoundingClientRect();
+    // 터치 이벤트나 마우스 이벤트 모두 clientX, clientY를 가짐
+    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     return [
-        (e.clientX - rect.left) * scaleX,
-        (e.clientY - rect.top) * scaleY
+        (clientX - rect.left) * scaleX,
+        (clientY - rect.top) * scaleY
     ];
 }
 
@@ -258,12 +276,14 @@ window.selectColor = function(color, el) {
     currentColor = color;
     document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
+    updateCursor();
 };
 
 window.selectEraser = function(el) {
     isEraser = true;
     document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
+    updateCursor();
 };
 
 window.changeMonth = function(delta) {
@@ -274,3 +294,4 @@ window.changeMonth = function(delta) {
 // 초기화
 renderCalendar();
 selectDate(new Date());
+updateCursor();
