@@ -1,61 +1,54 @@
-# GitHub Codespaces ♥️ C#
+# 🎨 공동 작업 그림일기 (Shared Picture Diary)
 
-Want to try out C# for web development? 
+함께 그림을 그리고 소중한 일상을 기록하는 **공동 작업 그림일기** 서비스입니다. 정겨운 원고지 스타일의 입력창과 자유로운 캔버스를 통해 매일의 기록을 남겨보세요.
 
-This repo builds a Weather API, OpenAPI integration to test with [Scalar](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/using-openapi-documents?view=aspnetcore-10.0#use-scalar-for-interactive-api-documentation), and displays the data in a web application using Blazor (.NET/C#).
+## ✨ 주요 기능
 
-We've given you both a frontend and backend to play around with and where you go from here is up to you!
+-   **자유로운 그림 그리기**: HTML5 Canvas를 이용해 마우스나 터치로 그림을 그릴 수 있습니다.
+-   **원고지 스타일 일기**: 10x5 격자(총 50자)로 구성된 아날로그 감성의 텍스트 입력 기능을 제공합니다.
+-   **타이핑 애니메이션**: 글자를 입력할 때 원고지 칸에 한 글자씩 채워지는 생동감 있는 효과를 경험할 수 있습니다.
+-   **달력 기반 관리**: 좌측 달력을 통해 과거의 기록을 불러오거나 오늘 날짜의 일기를 작성할 수 있습니다.
+-   **날짜별 접근 권한**:
+    -   **오늘**: 그림과 글을 자유롭게 작성하고 저장할 수 있습니다.
+    -   **과거**: 이전에 작성한 일기를 '읽기 전용' 모드로 불러옵니다.
+    -   **미래**: 아직 오지 않은 날짜의 일기는 접근이 제한됩니다.
+-   **데이터 보존**: 작성된 일기는 서버의 `resources/` 폴더 내에 `[날짜]_그림.jpg`와 `[날짜]_내용.txt` 파일로 안전하게 저장됩니다.
 
-Everything you do here is contained within this one codespace. There is no repository on GitHub yet. If and when you’re ready you can click "Publish Branch" and we’ll create your repository and push up your project. If you were just exploring then and have no further need for this code then you can simply delete your codespace and it's gone forever.
+## 🚀 시작하기
 
-### Run Options
+이 프로젝트는 Node.js와 Express를 기반으로 작동합니다.
 
-[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=lightgrey&logo=github)](https://codespaces.new/github/dotnet-codespaces)
-[![Open in Dev Container](https://img.shields.io/static/v1?style=for-the-badge&label=Dev+Container&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/github/dotnet-codespaces)
+### 1. 의존성 설치
+프로젝트 루트 디렉토리에서 필요한 패키지를 설치합니다.
+```bash
+npm install
+```
 
-You can also run this repository locally by following these instructions: 
-1. Clone the repo to your local machine `git clone https://github.com/github/dotnet-codespaces`
-1. Open repo in VS Code
+### 2. 서버 실행
+아래 명령어를 통해 로컬 서버를 가동합니다.
+```bash
+npm start
+```
 
-## Getting started
+### 3. 접속
+브라우저를 열고 다음 주소로 접속하세요.
+-   `http://localhost:3000`
 
-1. **📤 One-click setup**: [Open a new Codespace](https://codespaces.new/github/dotnet-codespaces), giving you a fully configured cloud developer environment.
-2. **▶️ Run all, one-click again**: Use VS Code's built-in *Run* command and open the forwarded ports *8080* and *8081* in your browser. 
+## 🛠 기술 스택
 
-![Debug menu in VS Code showing Run All](images/RunAll.png)
+-   **Frontend**: HTML5, CSS3, Vanilla JavaScript (Canvas API)
+-   **Backend**: Node.js, Express
+-   **Storage**: File System (Local JSON/Text/Image storage)
 
-3. The Blazor web app and Scalar can be open by heading to **/scalar** in your browser. On Scalar, head to the backend API and click "Test Request" to call and test the API. 
+## 📁 프로젝트 구조
 
-![A website showing weather](images/BlazorApp.png)
+```text
+├── resources/          # 저장된 그림 및 텍스트 데이터가 위치하는 폴더
+├── index.html          # 메인 프론트엔드 페이지
+├── server.js           # Express 서버 로직 및 API
+├── package.json        # 프로젝트 설정 및 의존성
+└── readme.md           # 프로젝트 소개 (현재 파일)
+```
 
-!["UI showing testing an API"](images/scalar.png)
-
-
-4. **🔄 Iterate quickly:** Codespaces updates the server on each save, and VS Code's debugger lets you dig into the code execution.
-
-5. To stop running, return to VS Code, and click Stop twice in the debug toolbar. 
-
-![VS Code stop debuggin on both backend and frontend](images/StopRun.png)
-
-
-## Contributing
-
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
-
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
-## Trademarks
-
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+---
+가족, 친구와 함께 오늘의 추억을 그려보세요! 🖌️📖
