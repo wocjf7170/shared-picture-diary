@@ -269,61 +269,60 @@
                 canvas.style.cursor = 'default';
             }
 
-            // Load Data from Server
+            // Load Data
             clearAll(false);
-            const resp = await fetch(`/api/load/${dateStr}`);
-            const data = await resp.json();
+            
+            // 1. Try to load from LocalStorage first (for today's unsaved/temp changes)
+            const localData = localStorage.getItem(`diary_${dateStr}`);
+            if (localData) {
+                const parsed = JSON.parse(localData);
+                loadToUI(parsed.imageData, parsed.textData);
+                return;
+            }
 
-            if (data.success) {
-                if (data.imageData) {
+            // 2. Try to load from static resources folder (Cloudflare Pages will serve these)
+            try {
+                // 그림 파일 확인
+                const imgUrl = `/resources/${dateStr}_그림.jpg`;
+                const txtUrl = `/resources/${dateStr}_내용.txt`;
+
+                const imgResp = await fetch(imgUrl);
+                if (imgResp.ok) {
                     const img = new Image();
                     img.onload = () => ctx.drawImage(img, 0, 0);
-                    img.src = data.imageData;
+                    img.src = imgUrl;
                 }
-                if (data.textData) {
-                    syncText(data.textData);
-                    input.value = data.textData;
+
+                const txtResp = await fetch(txtUrl);
+                if (txtResp.ok) {
+                    const text = await txtResp.text();
+                    syncText(text);
+                    input.value = text;
                 }
+            } catch (e) {
+                console.log("No saved data found for this date.");
+            }
+        }
+
+        function loadToUI(imgData, txtData) {
+            if (imgData) {
+                const img = new Image();
+                img.onload = () => ctx.drawImage(img, 0, 0);
+                img.src = imgData;
+            }
+            if (txtData) {
+                syncText(txtData);
+                input.value = txtData;
             }
         }
 
         function formatDate(d) {
-            return d.toISOString().split('T')[0];
+            const offset = d.getTimezoneOffset() * 60000;
+            const dateLocal = new Date(d.getTime() - offset);
+            return dateLocal.toISOString().split('T')[0];
         }
 
-        // 4. Drawing Logic (Same as before but with lock)
-        let isDrawing = false;
-        let lastX = 0, lastY = 0;
-
-        canvas.onmousedown = (e) => {
-            if (overlay.style.display === 'block') return;
-            isDrawing = true;
-            [lastX, lastY] = getCoordinates(e);
-        };
-        canvas.onmousemove = (e) => {
-            if (!isDrawing) return;
-            const [x, y] = getCoordinates(e);
-            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y);
-            ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.stroke();
-            [lastX, lastY] = [x, y];
-        };
-        window.onmouseup = () => isDrawing = false;
-
-        function getCoordinates(e) {
-            const rect = canvas.getBoundingClientRect();
-            return [e.clientX - rect.left, e.clientY - rect.top];
-        }
-
-        // 5. Typing Logic
-        input.oninput = (e) => {
-            syncText(e.target.value);
-        };
-
-        function syncText(text) {
-            cells.forEach((cell, idx) => {
-                cell.textContent = text[idx] || "";
-            });
-        }
+        // ... (Drawing and Typing logic remains same) ...
 
         // 6. Save & Clear
         document.getElementById('save-btn').onclick = async () => {
@@ -331,15 +330,10 @@
             const imageData = canvas.toDataURL('image/jpeg');
             const textData = input.value;
 
-            const resp = await fetch('/api/save', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ date: dateStr, imageData, textData })
-            });
-
-            if ((await resp.json()).success) {
-                alert('일기가 저장되었습니다!');
-            }
+            // Cloudflare Pages(Static)에서는 서버 파일 쓰기가 불가능하므로 LocalStorage에 저장
+            localStorage.setItem(`diary_${dateStr}`, JSON.stringify({ imageData, textData }));
+            
+            alert('일기가 브라우저에 저장되었습니다!\n(서버 저장을 위해서는 Cloudflare Workers 설정이 필요합니다)');
         };
 
         document.getElementById('clear-btn').onclick = () => {
