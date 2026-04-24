@@ -27,12 +27,26 @@ body {
     box-shadow: 2px 0 10px rgba(0,0,0,0.05);
 }
 
-.calendar-header {
+#calendar-selectors {
     display: flex;
-    justify-content: space-between;
+    gap: 5px;
     align-items: center;
+}
+
+#year-select, #month-select {
+    border: none;
+    background: transparent;
+    font-size: 16px;
     font-weight: 700;
-    margin-bottom: 20px;
+    cursor: pointer;
+    color: var(--text-color);
+    outline: none;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+#year-select:hover, #month-select:hover {
+    background-color: #f0f0f0;
 }
 
 .calendar-grid {
