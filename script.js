@@ -153,18 +153,19 @@ function formatDate(d) {
     return dateLocal.toISOString().split('T')[0];
 }
 
-// 4. 드로잉 액션
+// 4. 드로잉 액션 (마우스 & 터치 지원)
 let isDrawing = false;
 let lastX = 0, lastY = 0;
 
-canvas.onmousedown = (e) => {
+function startDrawing(e) {
     if (overlay.style.display === 'block') return;
     isDrawing = true;
     [lastX, lastY] = getCoordinates(e);
-};
+}
 
-canvas.onmousemove = (e) => {
+function draw(e) {
     if (!isDrawing) return;
+    e.preventDefault(); // 스크롤 방지
     const [x, y] = getCoordinates(e);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -174,18 +175,38 @@ canvas.onmousemove = (e) => {
     ctx.lineCap = 'round';
     ctx.stroke();
     [lastX, lastY] = [x, y];
-};
+}
 
-window.onmouseup = () => {
+function stopDrawing() {
     if (isDrawing) {
         isDrawing = false;
         autoSave();
     }
-};
+}
+
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+window.addEventListener('mouseup', stopDrawing);
+
+// 터치 이벤트
+canvas.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    startDrawing(touch);
+}, { passive: false });
+canvas.addEventListener('touchmove', (e) => {
+    const touch = e.touches[0];
+    draw(touch);
+}, { passive: false });
+canvas.addEventListener('touchend', stopDrawing);
 
 function getCoordinates(e) {
     const rect = canvas.getBoundingClientRect();
-    return [e.clientX - rect.left, e.clientY - rect.top];
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return [
+        (e.clientX - rect.left) * scaleX,
+        (e.clientY - rect.top) * scaleY
+    ];
 }
 
 // 5. 타이핑 액션
