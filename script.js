@@ -5,6 +5,7 @@ const input = document.getElementById('diary-input');
 const dateLabel = document.getElementById('date-label');
 const overlay = document.getElementById('overlay');
 const inputSection = document.getElementById('input-section');
+const weatherSelect = document.getElementById('weather-select');
 
 let selectedDate = new Date();
 let currentMonth = new Date();
@@ -100,7 +101,7 @@ async function selectDate(date) {
     const localData = localStorage.getItem(`diary_${dateStr}`);
     if (localData) {
         const parsed = JSON.parse(localData);
-        loadToUI(parsed.imageData, parsed.textData);
+        loadToUI(parsed.imageData, parsed.textData, parsed.weather);
         return;
     }
 
@@ -131,7 +132,7 @@ async function selectDate(date) {
     }
 }
 
-function loadToUI(imgData, txtData) {
+function loadToUI(imgData, txtData, weather) {
     if (imgData) {
         const img = new Image();
         img.onload = () => {
@@ -144,6 +145,11 @@ function loadToUI(imgData, txtData) {
     if (txtData) {
         syncText(txtData);
         input.value = txtData;
+    }
+    if (weather) {
+        weatherSelect.value = weather;
+    } else {
+        weatherSelect.value = 'sunny';
     }
 }
 
@@ -215,7 +221,6 @@ canvas.addEventListener('touchend', stopDrawing);
 
 function getCoordinates(e) {
     const rect = canvas.getBoundingClientRect();
-    // 터치 이벤트나 마우스 이벤트 모두 clientX, clientY를 가짐
     const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
     const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
     
@@ -251,7 +256,8 @@ function autoSave() {
 
     const imageData = canvas.toDataURL('image/png');
     const textData = input.value;
-    localStorage.setItem(`diary_${dateStr}`, JSON.stringify({ imageData, textData, ts: Date.now() }));
+    const weather = weatherSelect.value;
+    localStorage.setItem(`diary_${dateStr}`, JSON.stringify({ imageData, textData, weather, ts: Date.now() }));
 }
 
 function clearAll() {
@@ -266,7 +272,7 @@ window.addEventListener('storage', (e) => {
     const dateStr = formatDate(selectedDate);
     if (e.key === `diary_${dateStr}` && e.newValue) {
         const parsed = JSON.parse(e.newValue);
-        loadToUI(parsed.imageData, parsed.textData);
+        loadToUI(parsed.imageData, parsed.textData, parsed.weather);
     }
 });
 

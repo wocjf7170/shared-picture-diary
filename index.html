@@ -34,7 +34,15 @@
             
             <div class="diary-header">
                 <div class="diary-date" id="date-label"></div>
-                <div style="font-size: 14px; color: #888;">날씨: ☀️ 구름조금</div>
+                <div class="weather-selector">
+                    날씨: 
+                    <select id="weather-select" onchange="autoSave()">
+                        <option value="sunny">☀️ 맑음</option>
+                        <option value="cloudy">⛅ 보통</option>
+                        <option value="rainy">☁️ 흐림</option>
+                        <option value="snow">❄️ 눈</option>
+                    </select>
+                </div>
             </div>
 
             <div class="canvas-section">
