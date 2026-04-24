@@ -30,32 +30,12 @@ initCanvas();
 // 2. 달력 렌더링
 function renderCalendar() {
     const daysContainer = document.getElementById('calendar-days');
-    const yearSelect = document.getElementById('year-select');
-    const monthSelect = document.getElementById('month-select');
+    const monthDisplay = document.getElementById('month-display');
     daysContainer.innerHTML = '';
     
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-
-    // 연도 선택창 옵션 생성 (전후 10년)
-    yearSelect.innerHTML = '';
-    for (let y = year - 10; y <= year + 10; y++) {
-        const opt = document.createElement('option');
-        opt.value = y;
-        opt.textContent = `${y}년`;
-        if (y === year) opt.selected = true;
-        yearSelect.appendChild(opt);
-    }
-
-    // 월 선택창 옵션 생성
-    monthSelect.innerHTML = '';
-    for (let m = 0; m < 12; m++) {
-        const opt = document.createElement('option');
-        opt.value = m;
-        opt.textContent = `${m + 1}월`;
-        if (m === month) opt.selected = true;
-        monthSelect.appendChild(opt);
-    }
+    monthDisplay.textContent = `${year}년 ${month + 1}월`;
 
     const firstDay = new Date(year, month, 1).getDay();
     const lastDate = new Date(year, month + 1, 0).getDate();
@@ -241,7 +221,6 @@ canvas.addEventListener('touchend', stopDrawing);
 
 function getCoordinates(e) {
     const rect = canvas.getBoundingClientRect();
-    // 터치 이벤트나 마우스 이벤트 모두 clientX, clientY를 가짐
     const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
     const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
     
@@ -315,13 +294,6 @@ window.selectEraser = function(el) {
 
 window.changeMonth = function(delta) {
     currentMonth.setMonth(currentMonth.getMonth() + delta);
-    renderCalendar();
-};
-
-window.jumpToDate = function() {
-    const year = parseInt(document.getElementById('year-select').value);
-    const month = parseInt(document.getElementById('month-select').value);
-    currentMonth = new Date(year, month, 1);
     renderCalendar();
 };
 

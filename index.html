@@ -19,10 +19,7 @@
     <div id="sidebar">
         <div class="calendar-header">
             <button class="tool-btn" onclick="changeMonth(-1)">◀</button>
-            <div id="calendar-selectors">
-                <select id="year-select" onchange="jumpToDate()"></select>
-                <select id="month-select" onchange="jumpToDate()"></select>
-            </div>
+            <span id="month-display"></span>
             <button class="tool-btn" onclick="changeMonth(1)">▶</button>
         </div>
         <div class="calendar-grid" id="calendar-days"></div>
