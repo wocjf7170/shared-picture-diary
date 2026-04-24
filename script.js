@@ -12,13 +12,19 @@ const cells = [];
 let currentColor = '#000000';
 let isEraser = false;
 
-// 1. 초기 격자 생성
+// 1. 초기화 및 캔버스 배경 설정
+function initCanvas() {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
 for (let i = 0; i < 50; i++) {
     const cell = document.createElement('div');
     cell.className = 'cell';
     gridContainer.appendChild(cell);
     cells.push(cell);
 }
+initCanvas();
 
 // 2. 달력 렌더링
 function renderCalendar() {
@@ -106,7 +112,11 @@ async function selectDate(date) {
         const imgResp = await fetch(imgUrl);
         if (imgResp.ok) {
             const img = new Image();
-            img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            img.onload = () => {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
             img.src = imgUrl;
         }
 
@@ -124,7 +134,11 @@ async function selectDate(date) {
 function loadToUI(imgData, txtData) {
     if (imgData) {
         const img = new Image();
-        img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        img.onload = () => {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
         img.src = imgData;
     }
     if (txtData) {
@@ -198,14 +212,24 @@ function autoSave() {
 
     const imageData = canvas.toDataURL('image/png');
     const textData = input.value;
-    localStorage.setItem(`diary_${dateStr}`, JSON.stringify({ imageData, textData }));
+    localStorage.setItem(`diary_${dateStr}`, JSON.stringify({ imageData, textData, ts: Date.now() }));
 }
 
 function clearAll() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     cells.forEach(c => c.textContent = "");
     input.value = "";
 }
+
+// 다른 창/탭에서 변경 시 실시간 동기화
+window.addEventListener('storage', (e) => {
+    const dateStr = formatDate(selectedDate);
+    if (e.key === `diary_${dateStr}` && e.newValue) {
+        const parsed = JSON.parse(e.newValue);
+        loadToUI(parsed.imageData, parsed.textData);
+    }
+});
 
 // 6. 도구 선택
 window.selectColor = function(color, el) {
